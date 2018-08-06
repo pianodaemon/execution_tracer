@@ -7,11 +7,13 @@ import (
 )
 
 type fluentCollector struct {
+	host         string
+	port         int
 	conn         net.Conn
 	writeTimeout time.Time
 }
 
-func (fluentPtr *fluentCollector) connect(host string, port uint16) error {
+func (fluentPtr *fluentCollector) connect() error {
 
 	const (
 		defaultHost    = "127.0.0.1"
@@ -22,15 +24,17 @@ func (fluentPtr *fluentCollector) connect(host string, port uint16) error {
 
 	target := func() {
 
-		if host == "" {
-			host = defaultHost
+		if (*fluentPtr).host == "" {
+			(*fluentPtr).host = defaultHost
 		}
 
-		if port == 0 {
-			port = defaultPort
+		if (*fluentPtr).port == 0 {
+			(*fluentPtr).port = defaultPort
 		}
 
-		return host + ":" + strconv.Itoa(port)
+		portStr = strconv.Itoa((*fluentPtr).port)
+
+		return (*fluentPtr).host + ":" + portStr
 	}
 
 	var err error = nil
