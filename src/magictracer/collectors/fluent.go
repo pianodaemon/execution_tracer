@@ -58,7 +58,10 @@ func (fluentPtr *fluentCollector) send(buffPtr *[]byte) error {
 	var err error = nil
 
 	{
-		const defaultWriteTimeout = time.Duration(0)
+		const (
+			defaultWriteTimeout = time.Duration(0)
+		)
+
 		t := time.Time{}
 
 		if defaultWriteTimeout < (*fluentPtr).writeTimeout {
