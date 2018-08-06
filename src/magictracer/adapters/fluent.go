@@ -1,6 +1,5 @@
 package collectors
 
-
 import (
 	"net"
 	"strconv"
@@ -14,18 +13,21 @@ type fluentCollector struct {
 func (fluentPtr *fluentCollector) connect(host string, port uint16) error {
 
 	const (
-		defaultHost = "127.0.0.1"
-		defaultPort = 24224
-		defaultNet  = "tcp"
+		defaultHost    = "127.0.0.1"
+		defaultPort    = 24224
+		defaultNet     = "tcp"
 		defaultTimeout = 3 * time.Second
 	)
 
-	target := func () {
+	target := func() {
 
-		if host == "":
+		if host == "" {
 			host = defaultHost
-		if port == 0:
+		}
+
+		if port == 0 {
 			port = defaultPort
+		}
 
 		return host + ":" + strconv.Itoa(port)
 	}
@@ -37,7 +39,6 @@ func (fluentPtr *fluentCollector) connect(host string, port uint16) error {
 
 	return err
 }
-
 
 func (fluentPtr *fluentCollector) disconnect() {
 
