@@ -15,12 +15,12 @@ type Dealer struct {
 }
 
 func (dcol Dealer) Connect(adc Collector) {
-	err = adc.connect()
+	err = dcol.connect()
 	return err
 }
 
 func (dcol Dealer) Disconnect(adc Collector) {
 	muconn.Lock()
-	adc.disconnect()
+	dcol.disconnect()
 	muconn.Unlock()
 }
