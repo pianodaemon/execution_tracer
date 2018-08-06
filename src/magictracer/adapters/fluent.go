@@ -7,7 +7,8 @@ import (
 )
 
 type fluentCollector struct {
-	conn net.Conn
+	conn         net.Conn
+	writeTimeout time.Time
 }
 
 func (fluentPtr *fluentCollector) connect(host string, port uint16) error {
@@ -46,4 +47,24 @@ func (fluentPtr *fluentCollector) disconnect() {
 		(*fluentPtr).conn.Close()
 		(*fluentPtr).conn = nil
 	}
+}
+
+func (fluentPtr *fluentCollector) send(buffPtr *[]byte) error {
+
+	var err error = nil
+
+	{
+		const defaultWriteTimeout = time.Duration(0)
+		t := time.Time{}
+
+		if defaultWriteTimeout < (*fluentPtr).writeTimeout {
+			t = (*fluentPtr).writeTimeout
+		}
+
+		(*fluentPtr).conn.SetWriteDeadline(t)
+	}
+
+	_, err = (*fluentPtr).conn.Write(*buffPtr)
+
+	return err
 }
