@@ -17,37 +17,37 @@ type Dealer struct {
 	muconn sync.Mutex
 }
 
-func (dcol Dealer) Connect(adc Collector) {
+func (dco Dealer) Connect(adc Collector) {
 	err = adc.connect()
 	return err
 }
 
-func (dcol Dealer) Disconnect(adc Collector) {
+func (dco Dealer) Disconnect(adc Collector) {
 
-	dcol.muconn.Lock()
+	dco.muconn.Lock()
 
 	adc.disconnect()
 
-	dcol.muconn.Unlock()
+	dco.muconn.Unlock()
 }
 
-func (dcol Dealer) Send(adc Collector, buffPtr *[]byte) error {
+func (dco Dealer) Send(adc Collector, buffPtr *[]byte) error {
 
 	attemptSend := func(wasteTimeEvent func(int)) error {
 
-		for i := 0; i < dcol.maxRetry; i++ {
+		for i := 0; i < dco.maxRetry; i++ {
 
-			dcol.muconn.Lock()
+			dco.muconn.Lock()
 
 			err := adc.assureConn()
 
 			if err != nil {
-				dcol.muconn.Unlock()
+				dco.muconn.Unlock()
 				wasteTimeEvent(i)
 				continue
 			}
 
-			dcol.muconn.Unlock()
+			dco.muconn.Unlock()
 
 			err = adc.send(buffPtr)
 
@@ -59,7 +59,7 @@ func (dcol Dealer) Send(adc Collector, buffPtr *[]byte) error {
 		}
 
 		return fmt.Errof("Failed to reconnect, max retry: %v",
-			dcol.maxRetry)
+			dco.maxRetry)
 	}
 
 	return attemptSend(func(i int) {
@@ -70,10 +70,10 @@ func (dcol Dealer) Send(adc Collector, buffPtr *[]byte) error {
 
 		rate := int(math.Pow(defaultReconnWaitInc, float64(i-1)))
 
-		wTime := dcol.RetryWait * rate
+		wTime := dco.RetryWait * rate
 
-		if wTime > dcol.MaxRetryWait {
-			wTime = dcol.MaxRetryWait
+		if wTime > dco.MaxRetryWait {
+			wTime = dco.MaxRetryWait
 		}
 
 		time.Sleep(time.Duration(wTime) * time.Millisecond)
