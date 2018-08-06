@@ -2,6 +2,7 @@ package collectors
 
 import (
 	"fmt"
+	"math"
 	"sync"
 	"time"
 )
@@ -14,7 +15,10 @@ type Collector interface {
 }
 
 type Dealer struct {
-	muconn sync.Mutex
+	muconn       sync.Mutex
+	retryWait    int
+	maxRetry     int
+	maxRetryWait int
 }
 
 func (dco Dealer) Connect(adc Collector) {
@@ -70,10 +74,10 @@ func (dco Dealer) Send(adc Collector, buffPtr *[]byte) error {
 
 		rate := int(math.Pow(defaultReconnWaitInc, float64(i-1)))
 
-		wTime := dco.RetryWait * rate
+		wTime := dco.retryWait * rate
 
-		if wTime > dco.MaxRetryWait {
-			wTime = dco.MaxRetryWait
+		if wTime > dco.maxRetryWait {
+			wTime = dco.maxRetryWait
 		}
 
 		time.Sleep(time.Duration(wTime) * time.Millisecond)
