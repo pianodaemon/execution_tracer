@@ -16,13 +16,16 @@ type fluentCollector struct {
 func (fluentPtr *fluentCollector) connect() error {
 
 	const (
-		defaultHost    = "127.0.0.1"
-		defaultPort    = 24224
 		defaultNet     = "tcp"
 		defaultTimeout = 3 * time.Second
 	)
 
 	target := func() {
+
+		const (
+			defaultHost = "127.0.0.1"
+			defaultPort = 24224
+		)
 
 		if (*fluentPtr).host == "" {
 			(*fluentPtr).host = defaultHost
