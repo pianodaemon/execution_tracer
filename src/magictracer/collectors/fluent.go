@@ -53,6 +53,17 @@ func (fluentPtr *fluentCollector) disconnect() {
 	}
 }
 
+func (fluentPtr *fluentCollector) assureConn() error {
+
+	var err error = nil
+
+	if (*fluentPtr).conn == nil {
+		err = (*fluentPtr).connect()
+	}
+
+	return err
+}
+
 func (fluentPtr *fluentCollector) send(buffPtr *[]byte) error {
 
 	var err error = nil
